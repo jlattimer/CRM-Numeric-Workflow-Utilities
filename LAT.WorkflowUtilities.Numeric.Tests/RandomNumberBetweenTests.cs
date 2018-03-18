@@ -1,196 +1,136 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FakeXrmEasy;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
-using Moq;
-using System;
-using System.Activities;
 using System.Collections.Generic;
 
 namespace LAT.WorkflowUtilities.Numeric.Tests
 {
-	[TestClass]
-	public class RandomNumberBetweenTests
-	{
-		#region Class Constructor
-		private readonly string _namespaceClassAssembly;
-		public RandomNumberBetweenTests()
-		{
-			//[Namespace.class name, assembly name] for the class/assembly being tested
-			//Namespace and class name can be found on the class file being tested
-			//Assembly name can be found under the project properties on the Application tab
-			_namespaceClassAssembly = "LAT.WorkflowUtilities.Numeric.RandomNumberBetween" + ", " + "LAT.WorkflowUtilities.Numeric";
-		}
-		#endregion
-		#region Test Initialization and Cleanup
-		// Use ClassInitialize to run code before running the first test in the class
-		[ClassInitialize()]
-		public static void ClassInitialize(TestContext testContext) { }
+    [TestClass]
+    public class RandomNumberBetweenTests
+    {
+        #region Test Initialization and Cleanup
+        // Use ClassInitialize to run code before running the first test in the class
+        [ClassInitialize()]
+        public static void ClassInitialize(TestContext testContext) { }
 
-		// Use ClassCleanup to run code after all tests in a class have run
-		[ClassCleanup()]
-		public static void ClassCleanup() { }
+        // Use ClassCleanup to run code after all tests in a class have run
+        [ClassCleanup()]
+        public static void ClassCleanup() { }
 
-		// Use TestInitialize to run code before running each test 
-		[TestInitialize()]
-		public void TestMethodInitialize() { }
+        // Use TestInitialize to run code before running each test 
+        [TestInitialize()]
+        public void TestMethodInitialize() { }
 
-		// Use TestCleanup to run code after each test has run
-		[TestCleanup()]
-		public void TestMethodCleanup() { }
-		#endregion
+        // Use TestCleanup to run code after each test has run
+        [TestCleanup()]
+        public void TestMethodCleanup() { }
+        #endregion
 
-		[TestMethod]
-		public void SameValue()
-		{
-			//Target
-			Entity targetEntity = null;
+        [TestMethod]
+        public void RandomNumberBetween_Same_Numbers()
+        {
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-			//Input parameters
-			var inputs = new Dictionary<string, object>
-			{
-				{ "MinValue", 2 },
-				{ "MaxValue", 2 }
-			};
+            var inputs = new Dictionary<string, object>
+            {
+                { "MinValue", 2 },
+                { "MaxValue", 2 }
+            };
 
-			//Expected value(s)
-			const int expected = 2;
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
 
-			//Invoke the workflow
-			var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs);
+            const int expected = 2;
 
-			//Test(s)
-			Assert.AreEqual(expected, (int)output["GeneratedNumber"]);
-		}
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<RandomNumberBetween>(workflowContext, inputs);
 
-		[TestMethod]
-		public void MinLessThanZero()
-		{
-			//Target
-			Entity targetEntity = null;
+            //Assert
+            Assert.AreEqual(expected, (int)result["GeneratedNumber"]);
+        }
 
-			//Input parameters
-			var inputs = new Dictionary<string, object>
-			{
-				{ "MinValue", -2 },
-				{ "MaxValue", 1 }
-			};
+        [TestMethod]
+        public void RandomNumberBetween_Negative_And_Positive()
+        {
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-			//Invoke the workflow
-			var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs);
+            var inputs = new Dictionary<string, object>
+            {
+                { "MinValue", -2 },
+                { "MaxValue", 1 }
+            };
 
-			//Test(s)
-			Assert.IsTrue((int)output["GeneratedNumber"] >= 0 && (int)output["GeneratedNumber"] <= 1);
-		}
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
 
-		[TestMethod]
-		public void MaxLessThanZero()
-		{
-			//Target
-			Entity targetEntity = null;
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<RandomNumberBetween>(workflowContext, inputs);
 
-			//Input parameters
-			var inputs = new Dictionary<string, object>
-			{
-				{ "MinValue", 1 },
-				{ "MaxValue", -1 }
-			};
+            //Assert
+            Assert.IsTrue((int)result["GeneratedNumber"] >= 0 && (int)result["GeneratedNumber"] <= 1);
+        }
 
-			//Expected value(s)
-			const int expected = 1;
+        [TestMethod]
+        public void RandomNumberBetween_1_And_Negative_1()
+        {
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-			//Invoke the workflow
-			var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs);
+            var inputs = new Dictionary<string, object>
+            {
+                { "MinValue", 1 },
+                { "MaxValue", -1 }
+            };
 
-			//Test(s)
-			Assert.AreEqual(expected, (int)output["GeneratedNumber"]);
-		}
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
 
-		[TestMethod]
-		[ExpectedException(typeof(InvalidPluginExecutionException), "Max Value must be greater than Min Value.")]
-		public void MaxLessThanMin()
-		{
-			//Target
-			Entity targetEntity = null;
+            const int expected = 1;
 
-			//Input parameters
-			var inputs = new Dictionary<string, object>
-			{
-				{ "MinValue", 5 },
-				{ "MaxValue", 2 }
-			};
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<RandomNumberBetween>(workflowContext, inputs);
 
-			//Invoke the workflow
-			InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs);
-		}
+            //Assert
+            Assert.AreEqual(expected, (int)result["GeneratedNumber"]);
+        }
 
-		[TestMethod]
-		public void ValidValues()
-		{
-			//Target
-			Entity targetEntity = null;
+        [TestMethod]
+        [ExpectedException(typeof(InvalidPluginExecutionException), "Max Value must be greater than Min Value.")]
+        public void RandomNumberBetween_5_And_2()
+        {
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-			//Input parameters
-			var inputs = new Dictionary<string, object>
-			{
-				{ "MinValue", 1 },
-				{ "MaxValue", 3 }
-			};
+            var inputs = new Dictionary<string, object>
+            {
+                { "MinValue", 5 },
+                { "MaxValue", 2 }
+            };
 
-			//Invoke the workflow
-			var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs);
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
 
-			//Test(s)
-			Assert.IsTrue((int)output["GeneratedNumber"] >= 1 && (int)output["GeneratedNumber"] <= 3);
-		}
+            //Act
+            xrmFakedContext.ExecuteCodeActivity<RandomNumberBetween>(workflowContext, inputs);
+        }
 
-		/// <summary>
-		/// Invokes the workflow.
-		/// </summary>
-		/// <param name="name">Namespace.Class, Assembly</param>
-		/// <param name="target">The target entity</param>
-		/// <param name="inputs">The workflow input parameters</param>
-		/// <returns>The workflow output parameters</returns>
-		private static IDictionary<string, object> InvokeWorkflow(string name, ref Entity target, Dictionary<string, object> inputs)
-		{
-			var testClass = Activator.CreateInstance(Type.GetType(name)) as CodeActivity;
+        [TestMethod]
+        public void RandomNumberBetween_1_And_3()
+        {
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-			var serviceMock = new Mock<IOrganizationService>();
-			var factoryMock = new Mock<IOrganizationServiceFactory>();
-			var tracingServiceMock = new Mock<ITracingService>();
-			var workflowContextMock = new Mock<IWorkflowContext>();
+            var inputs = new Dictionary<string, object>
+            {
+                { "MinValue", 1 },
+                { "MaxValue", 3 }
+            };
 
-			IOrganizationService service = serviceMock.Object;
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
 
-			//Mock workflow Context
-			var workflowUserId = Guid.NewGuid();
-			var workflowCorrelationId = Guid.NewGuid();
-			var workflowInitiatingUserId = Guid.NewGuid();
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<RandomNumberBetween>(workflowContext, inputs);
 
-			//Workflow Context Mock
-			workflowContextMock.Setup(t => t.InitiatingUserId).Returns(workflowInitiatingUserId);
-			workflowContextMock.Setup(t => t.CorrelationId).Returns(workflowCorrelationId);
-			workflowContextMock.Setup(t => t.UserId).Returns(workflowUserId);
-			var workflowContext = workflowContextMock.Object;
-
-			//Organization Service Factory Mock
-			factoryMock.Setup(t => t.CreateOrganizationService(It.IsAny<Guid>())).Returns(service);
-			var factory = factoryMock.Object;
-
-			//Tracing Service - Content written appears in output
-			tracingServiceMock.Setup(t => t.Trace(It.IsAny<string>(), It.IsAny<object[]>())).Callback<string, object[]>(MoqExtensions.WriteTrace);
-			var tracingService = tracingServiceMock.Object;
-
-			//Parameter Collection
-			ParameterCollection inputParameters = new ParameterCollection { { "Target", target } };
-			workflowContextMock.Setup(t => t.InputParameters).Returns(inputParameters);
-
-			//Workflow Invoker
-			var invoker = new WorkflowInvoker(testClass);
-			invoker.Extensions.Add(() => tracingService);
-			invoker.Extensions.Add(() => workflowContext);
-			invoker.Extensions.Add(() => factory);
-
-			return invoker.Invoke(inputs);
-		}
-	}
+            //Assert
+            Assert.IsTrue((int)result["GeneratedNumber"] >= 1 && (int)result["GeneratedNumber"] <= 3);
+        }
+    }
 }

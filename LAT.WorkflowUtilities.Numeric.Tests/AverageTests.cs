@@ -1,9 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
-using Moq;
-using System;
-using System.Activities;
+﻿using FakeXrmEasy;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
 namespace LAT.WorkflowUtilities.Numeric.Tests
@@ -11,16 +7,6 @@ namespace LAT.WorkflowUtilities.Numeric.Tests
     [TestClass]
     public class AverageTests
     {
-        #region Class Constructor
-        private readonly string _namespaceClassAssembly;
-        public AverageTests()
-        {
-            //[Namespace.class name, assembly name] for the class/assembly being tested
-            //Namespace and class name can be found on the class file being tested
-            //Assembly name can be found under the project properties on the Application tab
-            _namespaceClassAssembly = "LAT.WorkflowUtilities.Numeric.Average" + ", " + "LAT.WorkflowUtilities.Numeric";
-        }
-        #endregion
         #region Test Initialization and Cleanup
         // Use ClassInitialize to run code before running the first test in the class
         [ClassInitialize()]
@@ -40,203 +26,147 @@ namespace LAT.WorkflowUtilities.Numeric.Tests
         #endregion
 
         [TestMethod]
-        public void PositiveWhole()
+        public void Average_Positive_Integers()
         {
-            //Target
-            Entity targetEntity = null;
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-            //Input parameters
-            var inputs = new Dictionary<string, object> 
+            var inputs = new Dictionary<string, object>
             {
                 { "Number1", 5 },
                 { "Number2", 5 },
                 { "RoundDecimalPlaces", -1 }
             };
 
-            //Expected value
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
+
             const decimal expected = 5;
 
-            //Invoke the workflow
-            var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs, null);
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<Average>(workflowContext, inputs);
 
-            //Test
-            Assert.AreEqual(expected, output["AverageValue"]);
+            //Assert
+            Assert.AreEqual(expected, result["AverageValue"]);
         }
 
         [TestMethod]
-        public void NegativeWhole()
+        public void Average_Negative_Integers()
         {
-            //Target
-            Entity targetEntity = null;
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-            //Input parameters
-            var inputs = new Dictionary<string, object> 
+            var inputs = new Dictionary<string, object>
             {
                 { "Number1", -5 },
                 { "Number2", -5 },
                 { "RoundDecimalPlaces", -1 }
             };
 
-            //Expected value
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
+
             const decimal expected = -5;
 
-            //Invoke the workflow
-            var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs, null);
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<Average>(workflowContext, inputs);
 
-            //Test
-            Assert.AreEqual(expected, output["AverageValue"]);
+            //Assert
+            Assert.AreEqual(expected, result["AverageValue"]);
         }
 
         [TestMethod]
-        public void MixedWhole()
+        public void Average_Mixed_Integers()
         {
-            //Target
-            Entity targetEntity = null;
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-            //Input parameters
-            var inputs = new Dictionary<string, object> 
+            var inputs = new Dictionary<string, object>
             {
                 { "Number1", -5 },
                 { "Number2", 5 },
                 { "RoundDecimalPlaces", -1 }
             };
 
-            //Expected value
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
+
             const decimal expected = 0;
 
-            //Invoke the workflow
-            var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs, null);
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<Average>(workflowContext, inputs);
 
-            //Test
-            Assert.AreEqual(expected, output["AverageValue"]);
+            //Assert
+            Assert.AreEqual(expected, result["AverageValue"]);
         }
 
         [TestMethod]
-        public void PositiveDouble()
+        public void Average_Positive_Doubles()
         {
-            //Target
-            Entity targetEntity = null;
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-            //Input parameters
-            var inputs = new Dictionary<string, object> 
+            var inputs = new Dictionary<string, object>
             {
                 { "Number1", 5.5m },
                 { "Number2", 5 },
                 { "RoundDecimalPlaces", -1 }
             };
 
-            //Expected value
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
+
             const decimal expected = 5.25m;
 
-            //Invoke the workflow
-            var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs, null);
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<Average>(workflowContext, inputs);
 
-            //Test
-            Assert.AreEqual(expected, output["AverageValue"]);
+            //Assert
+            Assert.AreEqual(expected, result["AverageValue"]);
         }
 
         [TestMethod]
-        public void PositiveDoubleNoRound()
+        public void Average_Positive_Doubles_Without_Rounding()
         {
-            //Target
-            Entity targetEntity = null;
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-            //Input parameters
-            var inputs = new Dictionary<string, object> 
+            var inputs = new Dictionary<string, object>
             {
                 { "Number1", 5.12435m },
                 { "Number2", 5.98678m },
                 { "RoundDecimalPlaces", -1 }
             };
 
-            //Expected value
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
+
             const decimal expected = 5.555565m;
 
-            //Invoke the workflow
-            var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs, null);
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<Average>(workflowContext, inputs);
 
-            //Test
-            Assert.AreEqual(expected, output["AverageValue"]);
+            //Assert
+            Assert.AreEqual(expected, result["AverageValue"]);
         }
 
         [TestMethod]
-        public void PositiveDoubleRoundTwo()
+        public void Average_Positive_Doubles_Rounding_2_Places()
         {
-            //Target
-            Entity targetEntity = null;
+            //Arrange
+            XrmFakedWorkflowContext workflowContext = new XrmFakedWorkflowContext();
 
-            //Input parameters
-            var inputs = new Dictionary<string, object> 
+            var inputs = new Dictionary<string, object>
             {
                 { "Number1", 5.12435m },
                 { "Number2", 5.98678m },
                 { "RoundDecimalPlaces", 2 }
             };
 
-            //Expected value
+            XrmFakedContext xrmFakedContext = new XrmFakedContext();
+
             const decimal expected = 5.56m;
 
-            //Invoke the workflow
-            var output = InvokeWorkflow(_namespaceClassAssembly, ref targetEntity, inputs, null);
+            //Act
+            var result = xrmFakedContext.ExecuteCodeActivity<Average>(workflowContext, inputs);
 
-            //Test
-            Assert.AreEqual(expected, output["AverageValue"]);
-        }
-
-        /// <summary>
-        /// Invokes the workflow.
-        /// </summary>
-        /// <param name="name">Namespace.Class, Assembly</param>
-        /// <param name="target">The target entity</param>
-        /// <param name="inputs">The workflow input parameters</param>
-        /// <param name="configuredServiceMock">The function to configure the Organization Service</param>
-        /// <returns>The workflow output parameters</returns>
-        private static IDictionary<string, object> InvokeWorkflow(string name, ref Entity target, Dictionary<string, object> inputs,
-            Func<Mock<IOrganizationService>, Mock<IOrganizationService>> configuredServiceMock)
-        {
-            var testClass = Activator.CreateInstance(Type.GetType(name)) as CodeActivity; ;
-
-            var serviceMock = new Mock<IOrganizationService>();
-            var factoryMock = new Mock<IOrganizationServiceFactory>();
-            var tracingServiceMock = new Mock<ITracingService>();
-            var workflowContextMock = new Mock<IWorkflowContext>();
-
-            //Apply configured Organization Service Mock
-            if (configuredServiceMock != null)
-                serviceMock = configuredServiceMock(serviceMock);
-
-            IOrganizationService service = serviceMock.Object;
-
-            //Mock workflow Context
-            var workflowUserId = Guid.NewGuid();
-            var workflowCorrelationId = Guid.NewGuid();
-            var workflowInitiatingUserId = Guid.NewGuid();
-
-            //Workflow Context Mock
-            workflowContextMock.Setup(t => t.InitiatingUserId).Returns(workflowInitiatingUserId);
-            workflowContextMock.Setup(t => t.CorrelationId).Returns(workflowCorrelationId);
-            workflowContextMock.Setup(t => t.UserId).Returns(workflowUserId);
-            var workflowContext = workflowContextMock.Object;
-
-            //Organization Service Factory Mock
-            factoryMock.Setup(t => t.CreateOrganizationService(It.IsAny<Guid>())).Returns(service);
-            var factory = factoryMock.Object;
-
-            //Tracing Service - Content written appears in output
-            tracingServiceMock.Setup(t => t.Trace(It.IsAny<string>(), It.IsAny<object[]>())).Callback<string, object[]>(MoqExtensions.WriteTrace);
-            var tracingService = tracingServiceMock.Object;
-
-            //Parameter Collection
-            ParameterCollection inputParameters = new ParameterCollection { { "Target", target } };
-            workflowContextMock.Setup(t => t.InputParameters).Returns(inputParameters);
-
-            //Workflow Invoker
-            var invoker = new WorkflowInvoker(testClass);
-            invoker.Extensions.Add(() => tracingService);
-            invoker.Extensions.Add(() => workflowContext);
-            invoker.Extensions.Add(() => factory);
-
-            return invoker.Invoke(inputs);
+            //Assert
+            Assert.AreEqual(expected, result["AverageValue"]);
         }
     }
 }
