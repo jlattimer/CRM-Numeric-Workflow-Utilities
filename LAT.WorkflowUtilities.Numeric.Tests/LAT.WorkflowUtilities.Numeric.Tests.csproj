@@ -74,6 +74,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AbsValueTests.cs" />
     <Compile Include="IsStringNumericTests.cs" />
     <Compile Include="MinTests.cs" />
     <Compile Include="MaxTests.cs" />
