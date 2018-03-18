@@ -38,7 +38,10 @@ namespace LAT.WorkflowUtilities.Numeric
             int roundDecimalPlaces = RoundDecimalPlaces.Get(context);
 
             if (number2 == 0)
-                Quotient.Set(context, null);
+            {
+                Quotient.Set(context, 0);
+                return;
+            }
 
             decimal quotient = number1 / number2;
 
