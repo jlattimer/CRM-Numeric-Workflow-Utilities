@@ -1,12 +1,15 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
+﻿using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-    public class Round : CodeActivity
+    public class Round : WorkFlowActivityBase
     {
+        public Round() : base(typeof(Round)) { }
+
         [RequiredArgument]
         [Input("Number To Round")]
         public InArgument<decimal> NumberToRound { get; set; }
@@ -15,30 +18,26 @@ namespace LAT.WorkflowUtilities.Numeric
         [Input("Decimal Places")]
         public InArgument<int> DecimalPlaces { get; set; }
 
-        [OutputAttribute("Rounded Number")]
+        [Output("Rounded Number")]
         public OutArgument<decimal> RoundedNumber { get; set; }
 
 
-        protected override void Execute(CodeActivityContext executionContext)
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
         {
-            ITracingService tracer = executionContext.GetExtension<ITracingService>();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-            try
-            {
-                decimal numberToRound = NumberToRound.Get(executionContext);
-                int decimalPlaces = DecimalPlaces.Get(executionContext);
+            decimal numberToRound = NumberToRound.Get(context);
+            int decimalPlaces = DecimalPlaces.Get(context);
 
-                if (decimalPlaces < 0)
-                    decimalPlaces = 0;
-				
-                decimal roundedNumber = Math.Round(numberToRound, decimalPlaces);
+            if (decimalPlaces < 0)
+                decimalPlaces = 0;
 
-                RoundedNumber.Set(executionContext, roundedNumber);
-            }
-            catch (Exception ex)
-            {
-                tracer.Trace("Exception: {0}", ex.ToString());
-            }
+            decimal roundedNumber = Math.Round(numberToRound, decimalPlaces);
+
+            RoundedNumber.Set(context, roundedNumber);
         }
     }
 }

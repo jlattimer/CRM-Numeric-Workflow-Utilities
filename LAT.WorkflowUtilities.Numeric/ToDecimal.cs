@@ -1,51 +1,49 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
+﻿using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-    public class ToDecimal : CodeActivity
+    public class ToDecimal : WorkFlowActivityBase
     {
+        public ToDecimal() : base(typeof(ToDecimal)) { }
+
         [RequiredArgument]
         [Input("Text To Convert")]
         public InArgument<string> TextToConvert { get; set; }
 
-        [OutputAttribute("Converted Number")]
+        [Output("Converted Number")]
         public OutArgument<decimal> ConvertedNumber { get; set; }
 
-        [OutputAttribute("Is Valid Decimal")]
+        [Output("Is Valid Decimal")]
         public OutArgument<bool> IsValid { get; set; }
 
-        protected override void Execute(CodeActivityContext executionContext)
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
         {
-            ITracingService tracer = executionContext.GetExtension<ITracingService>();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-            try
+            string textToConvert = TextToConvert.Get(context);
+
+            if (string.IsNullOrEmpty(textToConvert))
             {
-                string textToConvert = TextToConvert.Get(executionContext);
-
-                if (string.IsNullOrEmpty(textToConvert))
-                {
-                    IsValid.Set(executionContext, false);
-                    return;
-                }
-
-                decimal convertedNumber;
-                bool isNumber = decimal.TryParse(textToConvert, out convertedNumber);
-
-                if (isNumber)
-                {
-                    ConvertedNumber.Set(executionContext, convertedNumber);
-                    IsValid.Set(executionContext, true);
-                }
-                else
-                    IsValid.Set(executionContext, false);
+                IsValid.Set(context, false);
+                return;
             }
-            catch (Exception ex)
+
+            bool isNumber = decimal.TryParse(textToConvert, out var convertedNumber);
+
+            if (isNumber)
             {
-                tracer.Trace("Exception: {0}", ex.ToString());
+                ConvertedNumber.Set(context, convertedNumber);
+                IsValid.Set(context, true);
             }
+            else
+                IsValid.Set(context, false);
         }
     }
 }

@@ -1,12 +1,15 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
+﻿using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-    public sealed class Average : CodeActivity
+    public class Average : WorkFlowActivityBase
     {
+        public Average() : base(typeof(Average)) { }
+
         [RequiredArgument]
         [Input("Number 1")]
         public InArgument<decimal> Number1 { get; set; }
@@ -20,30 +23,26 @@ namespace LAT.WorkflowUtilities.Numeric
         [Default("-1")]
         public InArgument<int> RoundDecimalPlaces { get; set; }
 
-        [OutputAttribute("Average Value")]
+        [Output("Average Value")]
         public OutArgument<decimal> AverageValue { get; set; }
 
-        protected override void Execute(CodeActivityContext executionContext)
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
         {
-            ITracingService tracer = executionContext.GetExtension<ITracingService>();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-            try
-            {
-                decimal number1 = Number1.Get(executionContext);
-                decimal number2 = Number2.Get(executionContext);
-                int roundDecimalPlaces = RoundDecimalPlaces.Get(executionContext);
+            decimal number1 = Number1.Get(context);
+            decimal number2 = Number2.Get(context);
+            int roundDecimalPlaces = RoundDecimalPlaces.Get(context);
 
-                decimal averageValue = ((number1 + number2) / 2);
+            decimal averageValue = (number1 + number2) / 2;
 
-                if (roundDecimalPlaces != -1)
-                    averageValue = Math.Round(averageValue, roundDecimalPlaces);
+            if (roundDecimalPlaces != -1)
+                averageValue = Math.Round(averageValue, roundDecimalPlaces);
 
-                AverageValue.Set(executionContext, averageValue);
-            }
-            catch (Exception ex)
-            {
-                tracer.Trace("Exception: {0}", ex.ToString());
-            }
+            AverageValue.Set(context, averageValue);
         }
     }
 }

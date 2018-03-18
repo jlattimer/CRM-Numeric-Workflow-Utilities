@@ -1,12 +1,15 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
+﻿using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-    public sealed class Divide : CodeActivity
+    public class Divide : WorkFlowActivityBase
     {
+        public Divide() : base(typeof(Divide)) { }
+
         [RequiredArgument]
         [Input("Number 1")]
         public InArgument<decimal> Number1 { get; set; }
@@ -20,33 +23,29 @@ namespace LAT.WorkflowUtilities.Numeric
         [Default("-1")]
         public InArgument<int> RoundDecimalPlaces { get; set; }
 
-        [OutputAttribute("Quotient")]
+        [Output("Quotient")]
         public OutArgument<decimal> Quotient { get; set; }
 
-        protected override void Execute(CodeActivityContext executionContext)
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
         {
-            ITracingService tracer = executionContext.GetExtension<ITracingService>();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-            try
-            {
-                decimal number1 = Number1.Get(executionContext);
-                decimal number2 = Number2.Get(executionContext);
-                int roundDecimalPlaces = RoundDecimalPlaces.Get(executionContext);
+            decimal number1 = Number1.Get(context);
+            decimal number2 = Number2.Get(context);
+            int roundDecimalPlaces = RoundDecimalPlaces.Get(context);
 
-                if (number2 == 0)
-                    Quotient.Set(executionContext, null);
+            if (number2 == 0)
+                Quotient.Set(context, null);
 
-                decimal quotient = number1 / number2;
+            decimal quotient = number1 / number2;
 
-                if (roundDecimalPlaces != -1)
-                    quotient = Math.Round(quotient, roundDecimalPlaces);
+            if (roundDecimalPlaces != -1)
+                quotient = Math.Round(quotient, roundDecimalPlaces);
 
-                Quotient.Set(executionContext, quotient);
-            }
-            catch (Exception ex)
-            {
-                tracer.Trace("Exception: {0}", ex.ToString());
-            }
+            Quotient.Set(context, quotient);
         }
     }
 }

@@ -1,39 +1,38 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
+﻿using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-    public class RandomNumber : CodeActivity
+    public class RandomNumber : WorkFlowActivityBase
     {
+        public RandomNumber() : base(typeof(RandomNumber)) { }
+
         [RequiredArgument]
         [Input("Max Value")]
         public InArgument<int> MaxValue { get; set; }
 
-        [OutputAttribute("Generated Number")]
+        [Output("Generated Number")]
         public OutArgument<int> GeneratedNumber { get; set; }
 
-        protected override void Execute(CodeActivityContext executionContext)
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
         {
-            ITracingService tracer = executionContext.GetExtension<ITracingService>();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-            try
-            {
-                int maxValue = MaxValue.Get(executionContext);
+            int maxValue = MaxValue.Get(context);
 
-                if (maxValue < 1)
-                    maxValue = 1;
+            if (maxValue < 1)
+                maxValue = 1;
 
-                Random random = new Random();
-                int generatedNumber = random.Next(maxValue);
+            Random random = new Random();
+            int generatedNumber = random.Next(maxValue);
 
-                GeneratedNumber.Set(executionContext, generatedNumber);
-            }
-            catch (Exception ex)
-            {
-                tracer.Trace("Exception: {0}", ex.ToString());
-            }
+            GeneratedNumber.Set(context, generatedNumber);
         }
     }
 }

@@ -1,12 +1,15 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Workflow;
+﻿using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-    public sealed class Add : CodeActivity
+    public class Add : WorkFlowActivityBase
     {
+        public Add() : base(typeof(Add)) { }
+
         [RequiredArgument]
         [Input("Number 1")]
         public InArgument<decimal> Number1 { get; set; }
@@ -20,30 +23,26 @@ namespace LAT.WorkflowUtilities.Numeric
         [Default("-1")]
         public InArgument<int> RoundDecimalPlaces { get; set; }
 
-        [OutputAttribute("Sum")]
+        [Output("Sum")]
         public OutArgument<decimal> Sum { get; set; }
 
-        protected override void Execute(CodeActivityContext executionContext)
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
         {
-            ITracingService tracer = executionContext.GetExtension<ITracingService>();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-            try
-            {
-                decimal number1 = Number1.Get(executionContext);
-                decimal number2 = Number2.Get(executionContext);
-                int roundDecimalPlaces = RoundDecimalPlaces.Get(executionContext);
+            decimal number1 = Number1.Get(context);
+            decimal number2 = Number2.Get(context);
+            int roundDecimalPlaces = RoundDecimalPlaces.Get(context);
 
-                decimal sum = number1 + number2;
+            decimal sum = number1 + number2;
 
-                if (roundDecimalPlaces != -1)
-                    sum = Math.Round(sum, roundDecimalPlaces);
+            if (roundDecimalPlaces != -1)
+                sum = Math.Round(sum, roundDecimalPlaces);
 
-                Sum.Set(executionContext, sum);
-            }
-            catch (Exception ex)
-            {
-                tracer.Trace("Exception: {0}", ex.ToString());
-            }
+            Sum.Set(context, sum);
         }
     }
 }

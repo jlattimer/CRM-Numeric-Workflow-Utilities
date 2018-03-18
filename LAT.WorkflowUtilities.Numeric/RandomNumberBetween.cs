@@ -2,59 +2,55 @@
 using Microsoft.Xrm.Sdk.Workflow;
 using System;
 using System.Activities;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace LAT.WorkflowUtilities.Numeric
 {
-	public class RandomNumberBetween : CodeActivity
-	{
-		[RequiredArgument]
-		[Input("Min Value")]
-		public InArgument<int> MinValue { get; set; }
+    public class RandomNumberBetween : WorkFlowActivityBase
+    {
+        public RandomNumberBetween() : base(typeof(RandomNumberBetween)) { }
 
-		[RequiredArgument]
-		[Input("Max Value")]
-		public InArgument<int> MaxValue { get; set; }
+        [RequiredArgument]
+        [Input("Min Value")]
+        public InArgument<int> MinValue { get; set; }
 
-		[OutputAttribute("Generated Number")]
-		public OutArgument<int> GeneratedNumber { get; set; }
+        [RequiredArgument]
+        [Input("Max Value")]
+        public InArgument<int> MaxValue { get; set; }
 
-		protected override void Execute(CodeActivityContext executionContext)
-		{
-			ITracingService tracer = executionContext.GetExtension<ITracingService>();
+        [Output("Generated Number")]
+        public OutArgument<int> GeneratedNumber { get; set; }
 
-			try
-			{
-				int minValue = MinValue.Get(executionContext);
-				int maxValue = MaxValue.Get(executionContext);
+        protected override void ExecuteCrmWorkFlowActivity(CodeActivityContext context, LocalWorkflowContext localContext)
+        {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (localContext == null)
+                throw new ArgumentNullException(nameof(localContext));
 
-				if (minValue < 1)
-					minValue = 0;
+            int minValue = MinValue.Get(context);
+            int maxValue = MaxValue.Get(context);
 
-				if (maxValue < 1)
-					maxValue = 1;
+            if (minValue < 1)
+                minValue = 0;
 
-				if (maxValue < minValue)
-					throw new InvalidPluginExecutionException("Max Value must be greater than Min Value.");
+            if (maxValue < 1)
+                maxValue = 1;
 
-				if (maxValue == minValue)
-				{
-					GeneratedNumber.Set(executionContext, maxValue);
-					return;
-				}
+            if (maxValue < minValue)
+                throw new InvalidPluginExecutionException("Max Value must be greater than Min Value.");
 
-				Random random = new Random();
-				int generatedNumber = random.Next(minValue, maxValue);
+            if (maxValue == minValue)
+            {
+                GeneratedNumber.Set(context, maxValue);
+                return;
+            }
 
-				GeneratedNumber.Set(executionContext, generatedNumber);
-			}
-			catch (InvalidPluginExecutionException)
-			{
-				throw;
-			}
-			catch (Exception ex)
-			{
-				tracer.Trace("Exception: {0}", ex.ToString());
-			}
-		}
-	}
+            Random random = new Random();
+            int generatedNumber = random.Next(minValue, maxValue);
+
+            GeneratedNumber.Set(context, generatedNumber);
+        }
+    }
 }
