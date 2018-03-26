@@ -18,6 +18,8 @@ Custom workflow actions that deal with numeric values in Dynamics CRM 2015, 2016
 * ToDecimal
 * ToInteger
 * Truncate
+* Absolute Value
+* IsStringNumeric
 
 **Note - I am no longer supporting the 2011/2013 version of this solution.** 
 
