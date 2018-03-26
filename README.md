@@ -1,5 +1,9 @@
 # CRM Numeric Workflow Utilities
-Custom workflow actions that deal with numeric values in Dynamics CRM 2011, 2013, 2015, & 2016
+Custom workflow actions that deal with numeric values in Dynamics CRM 2015, 2016, & D365/CE (v7.0+)
+
+**Latest Release: https://github.com/jlattimer/CRM-Numeric-Workflow-Utilities/releases/latest**
+
+**[Donate](https://paypal.me/JLattimer)** a little bit if this saved you some time. That encourages me to keep this project alive.
 
 * Add
 * Average
@@ -15,10 +19,8 @@ Custom workflow actions that deal with numeric values in Dynamics CRM 2011, 2013
 * ToInteger
 * Truncate
 
-Go to [Releases](https://github.com/jlattimer/CRM-Numeric-Workflow-Utilities/releases) and choose the latest 1.x.x.x version for 2011/2013 or the latest 2.x.x.x for 2015/2016.
+**Note - I am no longer supporting the 2011/2013 version of this solution.** 
 
 *No warranty expressed or implied - use at your own risk!
 
 If you have ideas for new functionality, suggest them in the [Issues](https://github.com/jlattimer/CRM-Numeric-Workflow-Utilities/issues) area.
-
-Feel free to [donate](https://paypal.me/JLattimer) if this saved you some time or helped out :)
