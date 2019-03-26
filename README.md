@@ -19,7 +19,10 @@ Custom workflow actions that deal with numeric values in Dynamics CRM 2015, 2016
 * ToInteger
 * Truncate
 * Absolute Value
-* IsStringNumeric
+* Is String Numeric
+* Nth Root (Suleiman Ali)
+* Raise To The Power (Suleiman Ali)
+* Integer to Words
 
 **Note - I am no longer supporting the 2011/2013 version of this solution.** 
 
