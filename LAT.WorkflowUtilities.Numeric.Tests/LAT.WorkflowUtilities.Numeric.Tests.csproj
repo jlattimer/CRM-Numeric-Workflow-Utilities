@@ -76,16 +76,19 @@
   <ItemGroup>
     <Compile Include="AbsValueTests.cs" />
     <Compile Include="IsStringNumericTests.cs" />
+    <Compile Include="IntegerToWordsTests.cs" />
     <Compile Include="MinTests.cs" />
     <Compile Include="MaxTests.cs" />
     <Compile Include="AverageTests.cs" />
     <Compile Include="DivideTests.cs" />
     <Compile Include="MultiplyTests.cs" />
+    <Compile Include="NthRootTests.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RaiseToThePowerTests.cs" />
     <Compile Include="RandomNumberBetweenTests.cs" />
     <Compile Include="RandomNumbersTests.cs" />
     <Compile Include="RoundTests.cs" />

@@ -70,17 +70,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbsValue.cs" />
+    <Compile Include="IntegerToWords.cs" />
     <Compile Include="IsStringNumeric.cs" />
     <Compile Include="Min.cs" />
     <Compile Include="Max.cs" />
     <Compile Include="Average.cs" />
     <Compile Include="Divide.cs" />
     <Compile Include="Multiply.cs" />
+    <Compile Include="NthRoot.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RaiseToThePower.cs" />
     <Compile Include="RandomNumberBetween.cs" />
     <Compile Include="RandomNumber.cs" />
     <Compile Include="Round.cs" />
